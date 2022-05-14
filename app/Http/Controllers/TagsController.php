@@ -12,7 +12,7 @@ class TagsController extends Controller{
      * @return \Illuminate\Http\Response
      */
     public function index(){
-        return Tags::select('id','tagname','status')->get();
+        return Tags::select('id','tagname')->get();
     }
 
     /**
@@ -32,10 +32,7 @@ class TagsController extends Controller{
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request){
-        $request->validate([
-            'tagname'=>'required',
-            'status'=>'required'
-        ]);
+        $request->validate(['tagname'=>'required']);
 
         try{
             Tags::create($request->post());
@@ -52,8 +49,8 @@ class TagsController extends Controller{
      * @param  \App\Models\Tags  $tags
      * @return \Illuminate\Http\Response
      */
-    public function show(Tags $tags){
-        return response()->json(['tags'=>$tags]);
+    public function show(Tags $tag){
+        return response()->json(['tag'=>$tag]);
     }
 
     /**
@@ -74,14 +71,11 @@ class TagsController extends Controller{
      * @param  \App\Models\Tags  $tags
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Tags $tags){
-        $request->validate([
-            'tagname'=>'required',
-            'status'=>'required'
-        ]);
+    public function update(Request $request, Tags $tag){
+        $request->validate(['tagname'=>'required']);
 
         try{
-            $tags->fill($request->post())->update();
+            $tag->fill($request->post())->update();
             return response()->json(['message'=>'Tag Updated Successfully!!']);
 
         }catch(\Exception $e){
@@ -96,9 +90,9 @@ class TagsController extends Controller{
      * @param  \App\Models\Tags  $tags
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Tags $tags){
+    public function destroy(Tags $tag){
         try {
-            $tags->delete();
+            $tag->delete();
             return response()->json(['message'=>'Tag Deleted Successfully!!']);
             
         } catch (\Exception $e) {
