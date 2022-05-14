@@ -5,16 +5,14 @@ namespace App\Http\Controllers;
 use App\Models\Tags;
 use Illuminate\Http\Request;
 
-class TagsController extends Controller
-{
+class TagsController extends Controller{
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
-        //
+    public function index(){
+        return Tags::select('id','tagname','status')->get();
     }
 
     /**
@@ -33,9 +31,19 @@ class TagsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
-        //
+    public function store(Request $request){
+        $request->validate([
+            'tagname'=>'required',
+            'status'=>'required'
+        ]);
+
+        try{
+            Tags::create($request->post());
+            return response()->json(['message'=>'Tag Created Successfully!!']);
+        }catch(\Exception $e){
+            \Log::error($e->getMessage());
+            return response()->json(['message'=>'Something goes wrong while creating a Tag!!'],500);
+        }
     }
 
     /**
@@ -44,9 +52,8 @@ class TagsController extends Controller
      * @param  \App\Models\Tags  $tags
      * @return \Illuminate\Http\Response
      */
-    public function show(Tags $tags)
-    {
-        //
+    public function show(Tags $tags){
+        return response()->json(['tags'=>$tags]);
     }
 
     /**
@@ -67,9 +74,20 @@ class TagsController extends Controller
      * @param  \App\Models\Tags  $tags
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Tags $tags)
-    {
-        //
+    public function update(Request $request, Tags $tags){
+        $request->validate([
+            'tagname'=>'required',
+            'status'=>'required'
+        ]);
+
+        try{
+            $tags->fill($request->post())->update();
+            return response()->json(['message'=>'Tag Updated Successfully!!']);
+
+        }catch(\Exception $e){
+            \Log::error($e->getMessage());
+            return response()->json(['message'=>'Something goes wrong while updating a Tag!!'],500);
+        }
     }
 
     /**
@@ -78,8 +96,14 @@ class TagsController extends Controller
      * @param  \App\Models\Tags  $tags
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Tags $tags)
-    {
-        //
+    public function destroy(Tags $tags){
+        try {
+            $tags->delete();
+            return response()->json(['message'=>'Tag Deleted Successfully!!']);
+            
+        } catch (\Exception $e) {
+            \Log::error($e->getMessage());
+            return response()->json(['message'=>'Something goes wrong while deleting a Tag!!']);
+        }
     }
 }
